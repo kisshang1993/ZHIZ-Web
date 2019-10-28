@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}
+<title>芝芝 - 分享你我所知的事</title>
+<meta name="keywords" content="GIF美女图,美图,萌宠,科技,生活,娱乐,分享你我所知的事">
+{% endblock title %}
+{% block body %}
+
+{{flash}}
+<section class="center-content">
+    <div class="container">
+        <div class="articles">
+            <!-- Article -->
+            {% include 'article__templete.html' %}
+        </div>
+        {{ macros.Sidebar() }}
+    </div>
+</section>
+{{ macros.LoginForm() }}
+{% endblock body %}
+{% block script %}
+<script>
+$(function(){
+
+}())
+</script>
+{% endblock script %}

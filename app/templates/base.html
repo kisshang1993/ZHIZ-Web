@@ -1,0 +1,38 @@
+{% import "macros.html" as macros with context %}
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        {% block title %}
+        
+        {% endblock title %}
+        <meta name="description" content="GIF美女图,美图,萌宠,科技,生活,娱乐,工具,分享你我所知的事">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <link href="{{ url_for('static', filename = 'img/icon.png') }}" rel="shortcut icon" />
+        {% block link %}
+        
+        {% endblock link %}
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename = 'css/main.css', v='$CSS_VERSION$') }}" />
+        <script type="text/javascript">if (top !== self) top.location.href = self.location.href;</script>
+    </head>
+    <body>
+        {{ macros.Header() }}
+        {% block body %}
+        
+        {% endblock body %}
+        {{ macros.Footer() }}
+        <!-- TOP -->
+        <div class="go-top" id="top" title="返回顶部">
+            <svg class="icon">
+                <use xlink:href="#icontop"></use>
+            </svg>
+        </div>
+    </body>
+    <script src="https://cdn.staticfile.org/jquery/3.4.0/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/html5tooltipsjs/1.7.3/html5tooltips.min.js"></script>
+    <script src="//at.alicdn.com/t/font_1274342_okuy93k03c.js"></script>
+    <script src="/static/js/effect.js"></script>
+    {% block script %}
+    
+    {% endblock script %}
+</html>

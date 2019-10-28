@@ -1,0 +1,79 @@
+{% set except_list = ['GIF出处', '写真', '资源', '萌宠'] %}
+{% if articles.keywords or (articles.tag and articles.tag not in except_list) -%}
+<div class="filter">
+    {% if articles.keywords %}<span>关键字</span>: <span class="word">{{articles.keywords}}</span>{% endif %}
+    {% if articles.tag and articles.tag not in except_list %}<span>标签</span>: <span class="word">{{articles.tag}}</span>{% endif %}    
+</div>
+{% endif -%}
+{% for a in articles.items -%}
+<article class="info">
+    <div class="title">
+        {#<div class="user" title="{{a.author.username}}"><img src="{% if a.author.avatar %}/static/upload/avatar/{{a.author.avatar}}.jpg{% else %}/static/img/default-avatar.jpg{% endif %}"></div>#}
+        <a href="/article/{{ a.id }}/" target="_blank" class="text" title="{{a.title}}">
+            <span>{{ a.title }}</span>
+            <svg class="icon">
+                <use xlink:href="#iconjump"></use>
+            </svg>
+        </a>
+        <div class="status">
+            <span class="date"><svg class="icon">
+                    <use xlink:href="#iconshijian"></use>
+                </svg> {{ a.date.strftime("%Y-%m-%d") }}</span>
+            <!-- <span class="hot"><svg class="icon"><use xlink:href="#iconhot"></use></svg></span>
+                        <span class="fixed-top">顶置</span> -->
+        </div>
+    </div>
+    <div class="subtitle ali-font-light" title="{{a.subtitle}}">{{ a.subtitle or '' }}</div>
+    <div class="content">
+        {% if a.perview -%}
+        {% set imgs = a.perview.split(',') %}
+        <div class="img-box img-box-{{ imgs|length }}">
+            {% for img in imgs -%}
+            <div class="img-wrapper"><img class="perview view-full" src="{{ img }}" title="查看大图"></div>
+            {%- endfor %}
+        </div>
+        <div class="img-more"></div>
+        {%- endif %}
+    </div>
+    <div class="toolbar">
+        <div class="tag">
+            <span><svg class="icon">
+                    <use xlink:href="#icontag"></use>
+                </svg></span>
+            {% for t in a.tags -%}
+            <a href="/query/?tag={{t.name}}" target="_blank">{{t.name}}</a>
+            {%- endfor %}
+        </div>
+        <div class="databar">
+            <button class="like" data-id="{{a.id}}"><svg class="icon">
+                    <use xlink:href="#iconzan"></use>
+                </svg> 赞</button>
+            <button class="fav" data-id="{{a.id}}"><svg class="icon">
+                    <use xlink:href="#iconshoucang"></use>
+                </svg> 收藏</button>
+            <span class="visited"><svg class="icon">
+                    <use xlink:href="#iconfangwen1"></use>
+                </svg><span></span>{{a.visited}}</span>
+        </div>
+    </div>
+</article>
+{% else %}
+<!-- No Result -->
+<div class="no-result">
+    <svg class="icon">
+        <use xlink:href="#iconweibiaoti--"></use>
+    </svg>
+    Sorry, 暂无对应文章哦~
+</div>
+{%- endfor %}
+{% if articles.has_next -%}
+<!-- Load More -->
+<div class="load-more" data-next="{{articles.next_num}}">
+    <span class="reading">
+        <svg class="icon">
+            <use xlink:href="#icondianji"></use>
+        </svg> 加载更多精彩...
+    </span>
+    <img class="loading" src="/static/img/loading-2.svg">
+</div>
+{%- endif %}

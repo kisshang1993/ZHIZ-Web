@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}
+<title>找回密码</title>
+<meta name="keywords" content="Keywords">
+{% endblock title %}
+{% block link %}
+{% endblock link %}
+{% block body %}
+<div class="full-height forget-pwd-container">
+    <div class="fp-content">
+        {% if type == 'send' -%}
+        <div class="title"><span>找回密码</span></div>
+        <input type="text" class="form-control" placeholder="邮箱地址" id="verify_mail">
+        <button class="form-control" id="send_verify_mail">发送邮件</button>
+        <div class="success-tip">
+            <p>已向该邮箱发送了一封有效期为一小时的验证邮件</p>
+            <p>如未收到邮件，请检查是否在垃圾邮件中，或者请稍后点击重新发送</p>
+            <p>有问题请联系邮件feedback@zhiz.xyz</p>
+        </div>
+        {%- endif %}
+        {% if type == 'reset' -%}
+        <div class="reset-form">
+            <div class="title"><span>重置密码</span></div>
+            <input type="password" class="form-control" placeholder="请输入新密码 (6-20位英文数字)" id="reset_password">
+            <input type="password" class="form-control" placeholder="请再次输入新密码" id="reset_password_repeat">
+            <button class="form-control" id="reset_password_btn">重置</button>
+        </div>
+        <div class="reset-success">
+            <svg class="icon"><use xlink:href="#iconchenggong"></use></svg>
+            <p class="t1">重置密码成功</p>
+            <p class="t2"><a href="#" class="login-show">立即登录</a></p>
+        </div>
+        {%- endif %}
+        {% if type == 'expired' or type == 'invalid' -%}
+        <div class="reset-expired">
+            <div class="title"><span>验证链接无效或已经过期</span></div>
+            <div class="link"><a href="/user/forget-pwd/">重新发送</a></div>
+        </div>
+        {%- endif %}
+    </div>
+</div>
+{% endblock body %}
+{% block script %}
+<script>
+    $(function () {
+        $('.full-height').height($(window).height()
+         - $('header.header').outerHeight(true)
+         - $('nav.menu').outerHeight(true)
+         - $('footer.footer').outerHeight(true));
+    }())
+</script>
+{% endblock script %}

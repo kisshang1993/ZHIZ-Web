@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% block title %}
+<title>{{article.this.title}} - 芝芝</title>
+<meta name="keywords" content="{{article.this.title}}">
+{% endblock title %}
+{% block body %}
+<section class="center-content">
+    <div class="container">
+        <div class="articles">
+            <!-- Article Detail-->
+            <article class="detail">
+                <h1 class="title">{{article.this.title}}</h1>
+                <div class="subtitle">
+                    <span class="date"><svg class="icon">
+                            <use xlink:href="#iconshijian"></use>
+                        </svg> {{article.this.date.strftime("%Y-%m-%d")}}</span>
+                    <!-- <span class="author"><a href="#">{{article.this.author.nickname}}</a></span> -->
+                </div>
+                <div class="content">
+                    {{article.this.content|safe}}
+                </div>
+                {% if article.this.hide -%}
+                <div class="content-extra">
+                    <div class="hide-area">
+                        {% if current_user.is_anonymous -%}
+                        <svg class="icon"><use xlink:href="#iconlock"></use></svg>
+                        该隐藏内容只有<span class="login-show">登录</span>才有可能查看
+                        {%- elif current_user.level >= article.this.hide_level -%}
+                        <span class="hide-text">{{article.this.hide|safe}}</span>
+                        {% else %}
+                        该隐藏内容只有<b class="{{ macros.QualityByLevel(article.this.hide_level) }}">{{ macros.QualityTextByLevel(article.this.hide_level) }}</b>以上的用户可以访问                        
+                        {%- endif %}
+                    </div>
+                </div>
+                {%- endif %}
+                {% if article.this.status != 'notice' -%}
+                <div class="reward-bar">
+                    <a href="javascript:void(0)" class="like" data-id="{{article.this.id}}" title="如果觉得文章有趣，请赞一个吧！">
+                        <img src="/static/img/like-1.jpg">
+                        <span>赞一个</span>
+                    </a>
+                    <a href="javascript:void(0)" class="fav" data-id="{{article.this.id}}" title="收藏到‘我的收藏’">
+                        <svg class="icon"><use xlink:href="#iconxihuan"></use></svg>
+                        <span>收藏</span>
+                    </a>
+                    <a href="javascript:void(0)" class="reward" title="如果觉得文章有趣，支持一下作者吧！">
+                        <svg class="icon"><use xlink:href="#iconrenminbi"></use></svg>
+                        <span>打赏</span>
+                    </a>
+                </div>
+                <div class="toolbar">
+                    <div class="tag">
+                        <span><svg class="icon">
+                                <use xlink:href="#icontag"></use>
+                            </svg></span>
+                        {% for t in article.this.tags %}
+                        <a href="/query?tag={{t.name}}" target="_blank">{{t.name}}</a>
+                        {% endfor %}
+                    </div>
+                    <div class="databar">
+                        <div class="bdsharebuttonbox"><a href="#" class="bds_more" data-cmd="more"><svg class="icon"><use xlink:href="#iconfenxiang"></use></svg> 分享</a></div>
+                        <script>window._bd_share_config = { "common": { "bdSnsKey": {}, "bdText": "", "bdMini": "2", "bdMiniList": false, "bdPic": "", "bdStyle": "1", "bdSize": "16" }, "share": {} }; with (document) 0[(getElementsByTagName('head')[0] || body).appendChild(createElement('script')).src = '/static/api/js/share.js?v=89860593.js?cdnversion=' + ~(-new Date() / 36e5)];</script>
+                        <span class="visited"><svg class="icon">
+                                <use xlink:href="#iconfangwen1"></use>
+                            </svg><span></span>{{article.this.visited}}</span>
+                    </div>
+                </div>
+                <div class="footbar clearfix">
+                    {% if article.prev -%}
+                    <a href="/article/{{article.prev.id}}/" class="prev" title="上一篇: {{article.prev.title}}">
+                        <p><svg class="icon"><use xlink:href="#iconfenye-shangyiye"></use></svg> 上一篇</p>
+                        <p class="title">{{article.prev.title}}</p>
+                    </a>
+                    {%- endif %}
+                    {% if article.next -%}
+                    <a href="/article/{{article.next.id}}/" class="next" title="下一篇: {{article.next.title}}">
+                        <p>下一篇<svg class="icon">
+                            <use xlink:href="#iconfenye-shangyiye1"></use>
+                        </svg></p>
+                        <p class="title">{{article.next.title}}</p>
+                    </a>
+                    {%- endif %}
+                </div>
+                {%- endif %}
+            </article>
+
+            <!-- Comments -->
+            {% if article.this.status != 'notice' -%}
+            <div class="comments">
+                <div class="title">评论 <span>({{comment.count}})</span></div>
+                <ul class="cmt-ul">
+                    {% for c in comment.all %}
+                    <li class="comment {{ macros.Quality(c.sender) }}" data-reply="{{c.reply_id or '0'}}" id="comment_{{c.id}}">
+                        <div class="avatar" data-tooltip="{% if c.sender %}UID: {{c.sender.uid}}<br>昵称: {{c.sender.nickname or c.sender.username}}<br>品质: <b class='{{ macros.Quality(c.sender) }}'>{{ macros.QualityText(c.sender) }}</b>{% else %}访客用户{% endif %}" data-tooltip-animate-function="foldin" data-tooltip-color="charcoal">
+                            <img src="{{macros.Avatar(c.sender)}}">
+                        </div>
+                        <div class="content">
+                            <div class="name"><a href="#" id="c_{{c.id}}">{{c.sender.nickname or c.sender.username or c.guest_name}}</a><span class="date">{{c.date.strftime("%Y-%m-%d %H:%M:%S")}} #{{loop.index}}</span></div>
+                            <div class="text">
+                                {{c.content}}
+                            </div>
+                            <div class="bar">
+                                <a href="javascript:void(0)" class="like" data-type="count" data-comment_id="{{c.id}}"><svg class="icon">
+                                        <use xlink:href="#iconzan"></use>
+                                    </svg> [<span class="like-count">{{c.like}}</span>]</a>
+                                <a href="javascript:void(0)" class="reply" data-reply-id="{{c.id}}">回复</a>
+                            </div>
+                        </div>
+                    </li>
+                    {% else %}
+                    <li class="no-comment">暂无评论</li>
+                    {% endfor %}
+                </ul>
+                <div class="submit-comment">
+                    {% if current_user.is_anonymous %}
+                    <!-- Guest -->
+                    <div class="guest">
+                        <div class="avatar">
+                            <img src="/static/img/default-avatar.jpg">
+                        </div>
+                        <div class="basic-form">
+                            <span>
+                                <span>昵称: </span>
+                                <input type="text" class="form-control name" id="guest_name" placeholder="必填">
+                            </span>
+                            <span>
+                                <span>邮箱: </span>
+                                <input type="text" class="form-control email" id="guest_email" placeholder="选填，若有回复将邮箱通知">
+                                <div class="can-login">
+                                    <span class="or">or</span>
+                                    <button class="form-control loginbtn login-show">登录</button>
+                                </div>
+                            </span>
+                        </div>
+                    </div>
+                    {% else %}
+                    <!-- Login User -->
+                    {% endif %}
+                    <div class="submit-form">
+                        <textarea class="form-control" rows="3" id="comment_content" placeholder="评论需审核才能显示，请不要发带有广告、辱骂歧视、无意义的评论等内容"></textarea>
+                        <div class="reply-msg"></div>
+                        <button class="form-control" id="comment_submit" data-id="{{article.this.id}}">提交</button>
+                    </div>    
+                </div>
+            </div>
+            {%- endif %}
+        </div>
+        
+        {{ macros.Sidebar() }}
+    </div>
+</section>
+{{ macros.LoginForm() }}
+{% endblock body %}
+{% block script %}
+{% endblock script %}

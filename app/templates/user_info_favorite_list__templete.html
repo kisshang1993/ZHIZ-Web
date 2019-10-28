@@ -1,0 +1,16 @@
+<ul>
+	{% for p in pagination.items -%}
+	<li><a href="/article/{{p.article_id}}/" data-id="{{p.article_id}}" target="_blank">{{p.title}}</a><span>移除</span></li>
+	{% else %}
+	<p>暂无收藏</p>
+	{%- endfor %}
+</ul>
+<div class="pagination">
+	{% if pagination.pages > 0 -%}
+	<ul data-type="favorite">
+		<a href="/favorite/?page={{pagination.prev_num or '#'}}" data-type="prev"><</a>
+		<span>{{pagination.page}}/{{pagination.pages}}</span>
+		<a href="/favorite/?page={{pagination.next_num or '#'}}" data-type="next">></a>
+	</ul>
+	{%- endif %}
+</div>

@@ -1,0 +1,17 @@
+<ul id="notice_ul">
+	{% for p in pagination.items -%}
+	<li class="{{p.status}}"><a href="{{p.link}}" data-id="{{p.id}}" target="_blank" title="点击跳转查看详情">{{p.msg|safe}}</a></li>
+	{% else %}
+	<p>暂无消息</p>
+	{%- endfor %}
+</ul>
+<div class="pagination">
+	{% if pagination.pages > 0 -%}
+	<a href="javascript:void(0)" class="read-all">全部标记为已读</a>
+	<ul>
+		<a href="/notice/?page={{pagination.prev_num or '#'}}" data-type="prev"><</a>
+		<span>{{pagination.page}}/{{pagination.pages}}</span>
+		<a href="/notice/?page={{pagination.next_num or '#'}}" data-type="next">></a>
+	</ul>
+	{%- endif %}
+</div>

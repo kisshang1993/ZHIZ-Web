@@ -1,0 +1,198 @@
+<!-- 页头 -->
+{% macro Header(extra_css) %}
+<header class="header">
+    <div class="h-banner">
+        <div class="container">
+            <a class="logo" href="/" title="芝芝 - 分享你我所知道的事">
+                <img src="/static/img/logo-white.png">
+            </a>
+            <a class="h-title">
+               - “分享你我所知的事”
+            </a>
+        </div>
+    </div>
+</header>
+<nav class="menu">
+    <div class="container">
+        <div class="nav-list">
+            <li><a href="/"><svg class="icon">
+                        <use xlink:href="#iconhome1"></use>
+                    </svg> 首页</a></li>
+            <li><a href="/query/?tag=GIF出处">GIF出处</a></li>
+            <li><a href="/query/?tag=写真">写真</a></li>
+            <li><a href="/query/?tag=资源">资源</a></li>
+            <li><a href="/query/?tag=萌宠">萌宠</a></li>
+        </div>
+        <div class="search-icon" title="试试搜索？" id="search">
+            <svg class="icon">
+                <use xlink:href="#iconsousuo"></use>
+            </svg>
+        </div>
+        <div class="users-control">
+            {% if current_user.is_anonymous %}
+            <!-- Guest -->
+            <a href="javascript:void(0)" class="login-show" data-tooltip="登录账户">请登录</a>
+            {% else %}
+            <!-- Logined -->
+            <span class="user-panel">{% if sidebar_data and sidebar_data.notice > 0 %}<svg class="icon"><use xlink:href="#iconmsg"></use></svg> {% endif %}<span class="avatar"><img src="{% if current_user.avatar %}/static/upload/avatar/{{current_user.avatar}}.jpg{% else %}/static/img/default-avatar.jpg{% endif %}"></span><span class="name">{{current_user.nickname or current_user.username}}</span></span>
+            <div class="user-setting">
+                <a href="/user/profile/" target="_blank">个人资料</a>
+                <a href="/user/profile/" target="_blank">{% if sidebar_data and sidebar_data.notice > 0 %}<div class="noti-count">{{sidebar_data.notice}}</div>{% endif %}消息通知</a>
+                <a href="javascript:void(0)" id="logout">退出登录</a>
+            </div>
+            {% endif %}
+            <!-- <a href="" class="user-logout"><svg class="icon"><use xlink:href="#iconGroup"></use></svg> 注销</a> -->
+        </div>
+    </div>
+    <div class="search-bar">
+        <div class="container">
+            <div class="search-form">
+                <input type="text" id="search_keyword" placeholder="关键字">
+                <button id="search_btn"><svg class="icon">
+                        <use xlink:href="#iconsousuo"></use>
+                    </svg></button>
+            </div>
+        </div>
+        <svg class="icon search-close" id="search_close">
+            <use xlink:href="#iconguanbi"></use>
+        </svg>
+    </div>
+</nav>
+{% endmacro %}
+
+<!-- 页尾 -->
+{% macro Footer(extra_css) %}
+<footer class="footer" id="footer">
+    <div>
+        <span>Copyright © 2019 zhiz.xyz All rights reserved. </span>
+        <span>本站所有资源均为网络搜集，如有侵权本站会立即删除</span>
+    </div>
+</footer>
+{% endmacro %}
+
+{% macro Sidebar(extra_css) %}
+<!-- Sidebar -->
+<aside class="sidebar">
+    <!-- Hot Article -->
+    <section class="sb-panel hot-article">
+        <p>热门文章</p>
+        <ul class="hot-list">
+            {% for a in sidebar_data.articles %}
+            <li><a href="/article/{{ a.id }}/" target="_blank" title="{{a.title}}">{{a.title}} <svg class="icon">
+                        <use xlink:href="#iconjump"></use>
+                    </svg></a></li>
+            {% endfor %}
+        </ul>
+    </section>
+    <!-- Hot Tags -->
+    <section class="sb-panel hot-tags">
+        <p>热门标签</p>
+        <div class="tags">
+            {% for t in sidebar_data.tags %}
+            <a href="/query/?tag={{t.name}}" target="_blank" title="查看标签为{{t.name}}的文章">{{t.name}}</a>
+            {% endfor %}
+        </div>
+    </section>
+    <!-- Hot Comments -->
+    <section class="sb-panel hot-comments">
+        <p>最新评论</p>
+        <div class="comments">
+            {% for c in sidebar_data.comments %}
+            <a href="/article/{{ c.article_id }}/#comment_{{c.id}}" target="_blank" title="{{ c.content }}&#10;&#10;点击跳转查看">
+                <div class="c-avatar"><img src="{% if c.sender.avatar %}/static/upload/avatar/{{c.sender.avatar}}.jpg{% else %}/static/img/default-avatar.jpg{% endif %}"></div>
+                <div class="c-content">
+                    <div class="c-info">
+                        <span class="c-name">{% if c.sender %}{% if c.sender.nickname %}{{c.sender.nickname}}{% else %}{{c.sender.username}}{% endif %}{% else %}{{c.guest_name}}{% endif %}</span>
+                        <span class="c-date">{{c.date.strftime("%Y-%m-%d")}}</span>
+                    </div>
+                    <div class="c-msg">{{ c.content }}</div>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </section>
+</aside>
+{% endmacro %}
+
+
+<!-- 登录窗口 -->
+
+{% macro LoginForm(extra_css) %}
+{% if current_user.is_anonymous %}
+<div class="login-form">
+    <div class="login-wrap login">
+        <svg class="icon login-close">
+            <use xlink:href="#iconguanbi"></use>
+        </svg>
+        <div class="tab-title">
+            <li class="active">登录</li>
+            <li>注册</li>
+        </div>
+        <div class="tab-content">
+            <!-- Login -->
+            <div class="login">
+                <div class="username">
+                    <label>用户名</label>
+                    <input type="text" class="form-control" id="login_user">
+                </div>
+                <div class="passwd">
+                    <label>密码</label>
+                    <input type="password" class="form-control" id="login_passwd">
+                </div>
+                <div class="btns">
+                    <button class="form-control" id="login_btn">登录</button>
+                </div>
+                <div class="links">
+                    <a href="/user/forget-pwd/" target="_blank" id="forget_pwd">忘记密码?</a>
+                    <a href="javascript:void(0)" id="register_tab" data-tooltip="注册账号">注册</a>
+                </div>
+            </div>
+            <!-- Register -->
+            <div class="register">
+                <div class="invitation_code">
+                    <label>邀请码 <a href="/article/1/" target="_blank" data-tooltip-delay="0" data-tooltip-stickto="top" data-tooltip="获得邀请码"><svg
+                                class="icon">
+                                <use xlink:href="#iconwenhao"></use>
+                            </svg></a></label>
+                    <input type="text" class="form-control" id="register_Invitation_code" value="">
+                </div>
+                <div class="username">
+                    <label>用户名 <span class="form-error-msg"></span></label> 
+                    <input type="text" class="form-control " id="register_username" data-tooltip="用户名为8~20位字母与数字，下划线，减号" data-tooltip-stickto="bottom"
+                        data-tooltip-animate-function="spin" value="">
+                </div>
+                <div class="email">
+                    <label>邮箱 <span class="form-error-msg"></span></label>
+                    <input type="text" class="form-control" id="register_email" data-tooltip="邮箱是找回密码的唯一凭证"
+                        data-tooltip-stickto="bottom" data-tooltip-color="violet" data-tooltip-animate-function="spin" value="">
+                </div>
+                <div class="passwd">
+                    <label>密码 <span class="form-error-msg"></span></label>
+                    <input type="password" class="form-control" id="register_passwd" data-tooltip="密码长度为6~20位字母与数字，下划线，减号"
+                        data-tooltip-stickto="bottom" data-tooltip-animate-function="spin" value="">
+                </div>
+                <div class="passwd">
+                    <label>确认密码 <span class="form-error-msg"></span></label>
+                    <input type="password" class="form-control" id="register_passwd_repeat" value="">
+                </div>
+                <div class="btns">
+                    <button class="form-control" id="register_commit">注册</button>
+                </div>
+                <!-- <div class="verify-wrap" id="register_verify"></div> -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endmacro %}
+
+<!-- 获得品质颜色 -->
+{% macro QualityByLevel(level) %}{% if level == 1 %}quality-uncommon{% elif level == 2 %}quality-rare{% elif level == 3 %}quality-epic{% elif level >= 4 %}quality-legendary{% endif %}{% endmacro %}
+<!-- 获得用户品质颜色 -->
+{% macro Quality(user) %}{% if user %}{% if user.level == 1 %}quality-uncommon{% elif user.level == 2 %}quality-rare{% elif user.level == 3 %}quality-epic{% elif user.level >= 4 %}quality-legendary{% endif %}{% else %}quality-common{% endif %}{% endmacro %}
+<!-- 获得品质文字 -->
+{% macro QualityTextByLevel(level) %}{% if level == 1 %}优秀{% elif level == 2 %}稀有{% elif level == 3 %}史诗{% elif level >= 4 %}传说{% endif %}{% endmacro %}
+<!-- 获得用户品质文字 -->
+{% macro QualityText(user) %}{% if user %}{% if user.level == 1 %}优秀{% elif user.level == 2 %}稀有{% elif user.level == 3 %}史诗{% elif user.level >= 4 %}传说{% endif %}{% else %}普通{% endif %}{% endmacro %}
+<!-- 获得头像 -->
+{% macro Avatar(user) %}{% if user.avatar  %}/static/upload/avatar/{{user.avatar}}.jpg{% else %}/static/img/default-avatar.jpg{% endif %}{% endmacro %}

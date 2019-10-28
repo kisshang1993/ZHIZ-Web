@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}
+    <title>个人中心</title>
+    <meta name="keywords" content="Keywords">
+{% endblock title %}
+{% block link %}
+    <link rel="stylesheet" href="https://cdn.staticfile.org/cropperjs/1.5.2/cropper.min.css">
+{% endblock link %}
+{% block body %}
+<div class="cropper-img">
+    <div class="wrap">
+        <div><img src="" id="cropper_img"></div>
+        <div class="control">
+            <button class="form-control btn-default" id="cropper_cancel">取消</button>
+            <button class="form-control" id="cropper_btn">上传</button>
+        </div>
+    </div>
+</div>
+<div class="user">
+    <div class="container">
+        <section class="basic-info">
+            <h3>个人资料</h3>
+            <div class="detail">
+                <div class="avatar">
+                    <div class="change-avatar">
+                        <img src="{% if current_user.avatar %}/static/upload/avatar/{{current_user.avatar}}.jpg{% else %}/static/img/default-avatar.jpg{% endif %}" id="upload_avatar">
+                        <input type="file" id="change_avatar" accept="image/*">
+                        <div class="mask">点击上传头像</div>
+                    </div>
+                </div>
+                <div class="info">
+                    <div>UID: {{current_user.uid}}</div>
+                    <div>用户名：{{current_user.username}}</div>
+                    <div>邮箱：{{current_user.email}}</div>
+                    <div id="nickname_line">昵称：{% if current_user.nickname %}{{current_user.nickname }}{% else %}<button class="form-control btn-default" id="set_nickname">设置昵称</button>{% endif %}</div>
+                    <div>品质：<b class="{{ macros.Quality(current_user) }}">{{ macros.QualityText(current_user) }}</b> <svg class="icon about-quality" data-tooltip-delay="0" data-tooltip="某些文章限制优秀以上访问<br><br><span class='quality-tooltip quality-common'>普通</span>匿名用户<hr><span class='quality-tooltip quality-uncommon'>优秀</span>注册用户<br><span class='quality-tooltip quality-rare'>精良</span><br><span class='quality-tooltip quality-epic'>史诗</span><br><span class='quality-tooltip quality-legendary'>传说</span>" ><use xlink:href="#iconwenhao"></use></svg></div>
+                    <div>积分：{{current_user.score}} <svg class="icon"><use xlink:href="#iconwenhao" data-tooltip-delay="0" data-tooltip="积分可以提升品质<br>日常登录获取"></use></svg></div>
+                    {% if not current_user.nickname %}
+                    <div class="set-nickname">
+                        <div class="nickname">
+                            <label>昵称 <span class="form-error-msg"></span></label>
+                            <input type="text" class="form-control" id="nickname" placeholder="2~8位中英文">
+                            <p>* 昵称一经设置便不可更改</p>
+                        </div>
+                        <div class="btns">
+                            <button class="form-control btn-default" id="nickname_cancel">取消</button>
+                            <button class="form-control" id="nickname_commit">确认</button>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+        <section class="notice">
+            <h3>消息通知</h3>
+            <div class="async_container" id="notice_container"></div>
+        </section>
+        <section class="fav-article">
+            <h3>收藏列表</h3>
+            <div class="async_container" id="fav_container"></div>
+        </section>
+    </div>
+</div>
+{% endblock body %}
+{% block script %}
+<script src="/static/js/cropper.min.js"></script>
+<script src="/static/js/jquery-cropper.min.js"></script>
+<script>
+    $(function () {
+        UserInfoDateLoading('#fav_container', '/favorite/');
+        UserInfoDateLoading('#notice_container', '/notice/');
+    }())
+</script>
+{% endblock script %}
